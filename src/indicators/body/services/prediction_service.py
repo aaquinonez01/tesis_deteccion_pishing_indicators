@@ -22,21 +22,25 @@ class BodyPredictionService:
             print(f"An error occurred while loading the model, vectorizer or selector: {e}")
 
     def predict(self, email_body):
-        tp = TextProcessor()
-        tokens = tp.preprocess_text(email_body)
-        
-        # Transformar tokens en características numéricas usando el vectorizador ajustado
-        X = self.vectorizer.transform([" ".join(tokens)])
-        
-        # Seleccionar las mismas características que se usaron durante el entrenamiento
-        X_new = self.selector.transform(X)
-        
-        features = X_new.toarray()[0]
-        
-        # Realizar la predicción
-        prediction = self.model.predict([features])[0]
-        
-        return prediction
+        try:
+            tp = TextProcessor()
+            tokens = tp.preprocess_text(email_body)
+            
+            # Transformar tokens en características numéricas usando el vectorizador ajustado
+            X = self.vectorizer.transform([" ".join(tokens)])
+            
+            # Seleccionar las mismas características que se usaron durante el entrenamiento
+            X_new = self.selector.transform(X)
+            
+            features = X_new.toarray()[0]
+            
+            # Realizar la predicción
+            prediction = self.model.predict([features])[0]
+            
+            return prediction
+        except Exception as e:
+            print(f"An error occurred while predicting the email body: {e}")
+            return -1
     
 # if __name__ == "__main__":
 #     prediction_service = BodyPredictionService()
